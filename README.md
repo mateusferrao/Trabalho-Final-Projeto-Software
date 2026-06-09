@@ -651,26 +651,11 @@ npm run test:e2e
 
 ---
 
-## Documentacoes Utilizadas
-
-* **Runtime (Backend):** [Documentacao Oficial do Node.js](https://nodejs.org/docs/latest-v20.x/api/)
-* **Framework (Backend):** [Guia do Express.js](https://expressjs.com/en/guide/routing.html)
-* **ORM:** [Documentacao do Prisma](https://www.prisma.io/docs)
-* **Biblioteca (Frontend):** [Documentacao do React](https://react.dev/reference/react)
-* **Build Tool (Frontend):** [Guia do Vite](https://vitejs.dev/config/)
-* **Estilizacao:** [Documentacao do Tailwind CSS](https://tailwindcss.com/docs)
-* **Containerizacao:** [Documentacao do Docker](https://docs.docker.com/)
-* **Diagramas:** [PlantUML](https://plantuml.com/)
-* **Modelo C4:** [C4 Model](https://c4model.com/)
-* **Commits:** [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/)
-
----
-
 ## Autores
 
 | Nome | GitHub | LinkedIn | E-mail |
 |------|--------|----------|--------|
-| Mateus Ferrao da Costa | <div align="center"><a href="https://github.com/mateus-ferrao"><img src="https://joaopauloaramuni.github.io/image/github6.png" width="50px" height="50px"></a></div> | <div align="center"><a href="https://www.linkedin.com/in/mateus-ferrao"><img src="https://joaopauloaramuni.github.io/image/linkedin2.png" width="50px" height="50px"></a></div> | <div align="center"><a href="mailto:mateus.ferrao@sga.pucminas.br"><img src="https://joaopauloaramuni.github.io/image/gmail3.png" width="50px" height="50px"></a></div> |
+| Mateus Ferrão da Costa | <div align="center"><a href="https://github.com/mateusferrao"><img src="https://joaopauloaramuni.github.io/image/github6.png" width="50px" height="50px"></a></div> | <div align="center"><a href="https://www.linkedin.com/in/mateusferrao"><img src="https://joaopauloaramuni.github.io/image/linkedin2.png" width="50px" height="50px"></a></div> | <div align="center"><a href="mailto:mateusferraocosta2000@gmail.com"><img src="https://joaopauloaramuni.github.io/image/gmail3.png" width="50px" height="50px"></a></div> |
 
 ---
 
@@ -684,13 +669,6 @@ npm run test:e2e
 
 > [!IMPORTANT]
 > Por favor, verifique o arquivo [`CONTRIBUTING.md`](./CONTRIBUTING.md) para detalhes sobre nosso guia de estilo de codigo e o processo de submissao de PRs.
-
----
-
-## Agradecimentos
-
-* [**Engenharia de Software PUC Minas**](https://www.instagram.com/engsoftwarepucminas/) — Pelo apoio institucional, estrutura academica e fomento a inovacao e boas praticas de engenharia.
-* [**Prof. Dr. Joao Paulo Aramuni**](https://github.com/joaopauloaramuni) — Pelos valiosos ensinamentos sobre Arquitetura de Software e Padroes de Projeto, e pelo template de README que serviu de base para esta documentacao.
 
 ---
 
