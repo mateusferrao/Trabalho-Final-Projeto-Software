@@ -1,0 +1,28 @@
+@startuml arquitetura-c4-contexto-container
+!include <C4/C4_Container>
+
+LAYOUT_WITH_LEGEND()
+LAYOUT_TOP_DOWN()
+
+title AutoFix — Arquitetura C4 (Nível 2: Container)
+
+Person(cliente, "Cliente", "Pessoa que traz veículo para manutenção e consulta histórico de serviços.")
+Person(mecanico, "Mecânico", "Profissional que realiza diagnósticos e executa serviços nos veículos.")
+Person(gerente, "Gerente", "Administrador que gerencia clientes, OS, pagamentos e relatórios.")
+
+System_Boundary(autofix, "AutoFix") {
+    Container(spa, "Aplicação Web (SPA)", "React 18, Vite 5, TypeScript", "Interface web responsiva para gerenciamento da oficina.")
+    Container(api, "API REST", "Node.js 20, Express.js 4, TypeScript", "Expõe endpoints REST para regras de negócio e acesso a dados.")
+    ContainerDb(db, "Banco de Dados", "PostgreSQL 16", "Armazena clientes, veículos, OS, peças, pagamentos.")
+}
+
+System_Ext(email, "Serviço de E-mail (SendGrid)", "Envia notificações de status de OS e comprovantes de pagamento ao cliente.")
+
+Rel(cliente, spa, "Acessa via navegador", "HTTPS")
+Rel(mecanico, spa, "Acessa via navegador", "HTTPS")
+Rel(gerente, spa, "Acessa via navegador", "HTTPS")
+Rel(spa, api, "Consome API", "JSON/HTTPS")
+Rel(api, db, "Lê e escreve dados", "TCP/5432")
+Rel(api, email, "Envia e-mails", "SMTP")
+
+@enduml

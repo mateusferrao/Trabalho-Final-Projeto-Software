@@ -1,0 +1,41 @@
+@startuml sequencia-sistema-uc06-concluir-ordem-servico
+!theme plain
+skinparam sequenceMessageAlign center
+
+title Diagrama de Sequência do Sistema — UC-06: Concluir Ordem de Serviço
+
+actor "Mecânico" as mecanico
+participant ":Sistema" as sistema
+
+mecanico -> sistema : buscarOS(numeroOS)
+sistema --> mecanico : dadosOS(status="Em Execução")
+
+mecanico -> sistema : registrarDiagnostico(osId, diagnostico)
+sistema --> mecanico : confirmação
+
+loop para cada serviço realizado
+    mecanico -> sistema : adicionarServico(osId, servicoId, valor, observacao)
+    sistema --> mecanico : itemServicoAdicionado
+end
+
+loop para cada peça utilizada
+    mecanico -> sistema : adicionarPeca(osId, pecaId, quantidade)
+    sistema --> mecanico : itemPecaAdicionado
+end
+
+mecanico -> sistema : calcularTotal(osId)
+sistema --> mecanico : valorTotal
+
+mecanico -> sistema : concluirOS(osId)
+sistema --> mecanico : ordemServico(status="Concluída", valorTotal)
+
+note right of sistema
+  Pós-condições:
+  - OS com status "Concluída"
+  - Diagnóstico registrado
+  - Itens de serviço e peças associados
+  - Estoque de peças atualizado (baixa)
+  - Valor total calculado
+end note
+
+@enduml

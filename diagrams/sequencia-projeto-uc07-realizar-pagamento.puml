@@ -1,0 +1,62 @@
+@startuml sequencia-projeto-uc07-realizar-pagamento
+!theme plain
+skinparam sequenceMessageAlign center
+
+title Diagrama de Sequência (Projeto) — UC-07: Realizar Pagamento
+
+actor "Gerente" as gerente
+
+participant ":PagamentoController" as ctrl
+participant ":PagamentoService" as svc
+participant ":OSRepository" as repoOS
+participant ":PagamentoRepository" as repoPag
+
+gerente -> ctrl : POST /pagamentos\n{osId, valor, formaPagamento}
+activate ctrl
+
+ctrl -> svc : processarPagamento(osId, valor, formaPagamento)
+activate svc
+
+svc -> repoOS : findById(osId)
+activate repoOS
+repoOS --> svc : ordemServico
+deactivate repoOS
+
+svc -> svc : validarStatus(ordemServico, "CONCLUIDA")
+svc -> svc : validarValor(valor, ordemServico.valorTotal)
+
+create participant ":Pagamento" as pag
+svc -> pag : new Pagamento(valor, formaPagamento)
+pag --> svc : pagamento(status: "PENDENTE")
+
+svc -> svc : pagamento.processar()
+
+alt pagamento aprovado
+    svc -> repoPag : save(pagamento)
+    activate repoPag
+    repoPag --> svc : pagamentoPersistido(status: "APROVADO")
+    deactivate repoPag
+
+    svc -> svc : ordemServico.setStatus("PAGA")
+    svc -> repoOS : save(ordemServico)
+    activate repoOS
+    repoOS --> svc : osAtualizada
+    deactivate repoOS
+
+    svc --> ctrl : pagamentoRealizado
+    deactivate svc
+
+    ctrl --> gerente : 201 Created\n{id, status: "APROVADO", comprovante}
+    deactivate ctrl
+
+else pagamento recusado
+    svc -> repoPag : save(pagamento)
+    activate repoPag
+    repoPag --> svc : pagamentoPersistido(status: "RECUSADO")
+    deactivate repoPag
+
+    svc --> ctrl : pagamentoRecusado(motivo)
+    ctrl --> gerente : 422 Unprocessable Entity\n{motivo}
+end
+
+@enduml

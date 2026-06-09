@@ -1,0 +1,53 @@
+@startuml sequencia-projeto-uc03-abrir-ordem-servico
+!theme plain
+skinparam sequenceMessageAlign center
+
+title Diagrama de Sequência (Projeto) — UC-03: Abrir Ordem de Serviço
+
+actor "Gerente" as gerente
+
+participant ":OSController" as ctrl
+participant ":OSService" as svc
+participant ":ClienteRepository" as repoCliente
+participant ":VeiculoRepository" as repoVeiculo
+participant ":OSRepository" as repoOS
+
+gerente -> ctrl : POST /ordens-servico\n{clienteId, veiculoId, descricao}
+activate ctrl
+
+ctrl -> svc : criarOS(clienteId, veiculoId, descricao)
+activate svc
+
+svc -> repoCliente : findById(clienteId)
+activate repoCliente
+repoCliente --> svc : cliente
+deactivate repoCliente
+
+alt cliente não encontrado
+    svc --> ctrl : ClienteNaoEncontradoError
+    ctrl --> gerente : 404 Not Found
+else cliente encontrado
+    svc -> repoVeiculo : findById(veiculoId)
+    activate repoVeiculo
+    repoVeiculo --> svc : veiculo
+    deactivate repoVeiculo
+
+    svc -> svc : validarVeiculoDoCliente(veiculo, clienteId)
+
+    create participant ":OrdemServico" as os
+    svc -> os : new OrdemServico(cliente, veiculo, descricao)
+    os --> svc : ordemServico
+
+    svc -> repoOS : save(ordemServico)
+    activate repoOS
+    repoOS --> svc : ordemServicoPersistida
+    deactivate repoOS
+
+    svc --> ctrl : ordemServicoCriada
+    deactivate svc
+
+    ctrl --> gerente : 201 Created\n{id, numero, status: "ABERTA"}
+    deactivate ctrl
+end
+
+@enduml

@@ -1,0 +1,36 @@
+@startuml sequencia-sistema-uc07-realizar-pagamento
+!theme plain
+skinparam sequenceMessageAlign center
+
+title Diagrama de Sequência do Sistema — UC-07: Realizar Pagamento
+
+actor "Gerente" as gerente
+participant ":Sistema" as sistema
+
+gerente -> sistema : buscarOS(numeroOS)
+sistema --> gerente : dadosOS(status="Concluída", valorTotal)
+
+gerente -> sistema : selecionarFormaPagamento(formaPagamento)
+sistema --> gerente : confirmação
+
+gerente -> sistema : confirmarValor(osId, valor)
+sistema --> gerente : resumoPagamento
+
+gerente -> sistema : processarPagamento(osId, valor, formaPagamento)
+
+alt pagamento aprovado
+    sistema --> gerente : pagamento(status="Aprovado")
+    gerente -> sistema : emitirComprovante(pagamentoId)
+    sistema --> gerente : comprovante(PDF)
+else pagamento recusado
+    sistema --> gerente : pagamento(status="Recusado", motivo)
+end
+
+note right of sistema
+  Pós-condições (sucesso):
+  - Pagamento registrado com status "Aprovado"
+  - OS atualizada para status "Paga"
+  - Comprovante gerado
+end note
+
+@enduml

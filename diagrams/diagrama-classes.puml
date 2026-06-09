@@ -1,0 +1,158 @@
+@startuml diagrama-classes
+!theme plain
+skinparam classAttributeIconSize 0
+skinparam classFontSize 12
+
+title Diagrama de Classes — AutoFix
+
+enum StatusOS {
+    ABERTA
+    EM_DIAGNOSTICO
+    ORCAMENTO_GERADO
+    APROVADA
+    EM_EXECUCAO
+    CONCLUIDA
+    PAGA
+    ENCERRADA
+    CANCELADA
+}
+
+enum FormaPagamento {
+    DINHEIRO
+    CARTAO_CREDITO
+    CARTAO_DEBITO
+    PIX
+}
+
+enum StatusPagamento {
+    PENDENTE
+    PROCESSANDO
+    APROVADO
+    RECUSADO
+    ESTORNADO
+}
+
+enum Especialidade {
+    MOTOR
+    SUSPENSAO
+    ELETRICA
+    FUNILARIA
+    PINTURA
+    GERAL
+}
+
+class Cliente {
+    - id: UUID
+    - nome: String
+    - cpf: String
+    - telefone: String
+    - email: String
+    - endereco: String
+    - dataCadastro: Date
+    + getCpfFormatado(): String
+    + getVeiculos(): Veiculo[]
+    + getOrdensServico(): OrdemServico[]
+}
+
+class Veiculo {
+    - id: UUID
+    - placa: String
+    - marca: String
+    - modelo: String
+    - ano: Integer
+    - cor: String
+    - quilometragem: Integer
+    + getPlacaFormatada(): String
+    + getDescricaoCompleta(): String
+}
+
+class Mecanico {
+    - id: UUID
+    - nome: String
+    - cpf: String
+    - telefone: String
+    - especialidade: Especialidade
+    - ativo: Boolean
+    + getOrdensAtivas(): OrdemServico[]
+    + isDisponivel(): Boolean
+}
+
+class OrdemServico {
+    - id: UUID
+    - numero: Integer
+    - dataAbertura: Date
+    - dataConclusao: Date
+    - status: StatusOS
+    - descricaoProblema: String
+    - diagnostico: String
+    - valorTotal: Decimal
+    + calcularTotal(): Decimal
+    + concluir(): void
+    + cancelar(): void
+    + aprovar(): void
+    + getItensServico(): ItemServico[]
+    + getItensPeca(): ItemPeca[]
+}
+
+class Servico {
+    - id: UUID
+    - nome: String
+    - descricao: String
+    - precoReferencia: Decimal
+    - tempoEstimado: Integer
+    + getPrecoFormatado(): String
+    + getTempoEstimadoHoras(): String
+}
+
+class ItemServico {
+    - id: UUID
+    - valor: Decimal
+    - observacao: String
+    + getSubtotal(): Decimal
+}
+
+class Peca {
+    - id: UUID
+    - codigo: String
+    - nome: String
+    - descricao: String
+    - precoCusto: Decimal
+    - precoVenda: Decimal
+    - quantidadeEstoque: Integer
+    + temEstoque(qtd: Integer): Boolean
+    + baixarEstoque(qtd: Integer): void
+}
+
+class ItemPeca {
+    - id: UUID
+    - quantidade: Integer
+    - precoUnitario: Decimal
+    + getSubtotal(): Decimal
+}
+
+class Pagamento {
+    - id: UUID
+    - valor: Decimal
+    - formaPagamento: FormaPagamento
+    - data: Date
+    - status: StatusPagamento
+    + processar(): void
+    + estornar(): void
+    + isAprovado(): Boolean
+}
+
+' ============================
+' RELACIONAMENTOS
+' ============================
+
+Cliente "1" -- "*" Veiculo : possui >
+Cliente "1" -- "*" OrdemServico : solicita >
+Veiculo "1" -- "*" OrdemServico : referenciado em >
+Mecanico "1" -- "*" OrdemServico : responsável por >
+OrdemServico "1" -- "*" ItemServico : contém >
+OrdemServico "1" -- "*" ItemPeca : contém >
+OrdemServico "1" -- "0..1" Pagamento : gera >
+Servico "1" -- "*" ItemServico : tipo de >
+Peca "1" -- "*" ItemPeca : tipo de >
+
+@enduml

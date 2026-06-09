@@ -1,0 +1,103 @@
+@startuml diagrama-componentes
+!theme plain
+skinparam componentStyle uml2
+skinparam packageStyle rectangle
+
+title Diagrama de Componentes — AutoFix API (Back-end)
+
+package "<<Frontend>>\nReact SPA" as frontend {
+    [Páginas e Componentes] as pages
+    [Serviços HTTP (Axios)] as httpService
+}
+
+package "<<Backend>>\nExpress.js API" as backend {
+
+    package "Controllers" {
+        [ClienteController] as ctrlCliente
+        [VeiculoController] as ctrlVeiculo
+        [OrdemServicoController] as ctrlOS
+        [PagamentoController] as ctrlPagamento
+        [PecaController] as ctrlPeca
+        [ServicoController] as ctrlServico
+    }
+
+    package "Services" {
+        [ClienteService] as svcCliente
+        [VeiculoService] as svcVeiculo
+        [OrdemServicoService] as svcOS
+        [PagamentoService] as svcPagamento
+        [PecaService] as svcPeca
+        [ServicoService] as svcServico
+    }
+
+    package "Repositories" {
+        [ClienteRepository] as repoCliente
+        [VeiculoRepository] as repoVeiculo
+        [OrdemServicoRepository] as repoOS
+        [PagamentoRepository] as repoPagamento
+        [PecaRepository] as repoPeca
+        [ServicoRepository] as repoServico
+        [ItemServicoRepository] as repoItemServico
+        [ItemPecaRepository] as repoItemPeca
+    }
+
+    package "Middleware" {
+        [AuthMiddleware] as authMid
+        [ErrorHandler] as errorHandler
+        [ValidationMiddleware] as validMid
+    }
+}
+
+database "PostgreSQL" as db
+
+pages --> httpService
+
+httpService --> ctrlCliente : HTTP/REST
+httpService --> ctrlVeiculo : HTTP/REST
+httpService --> ctrlOS : HTTP/REST
+httpService --> ctrlPagamento : HTTP/REST
+httpService --> ctrlPeca : HTTP/REST
+httpService --> ctrlServico : HTTP/REST
+
+ctrlCliente --> svcCliente
+ctrlVeiculo --> svcVeiculo
+ctrlOS --> svcOS
+ctrlPagamento --> svcPagamento
+ctrlPeca --> svcPeca
+ctrlServico --> svcServico
+
+svcCliente --> repoCliente
+svcVeiculo --> repoVeiculo
+svcOS --> repoOS
+svcOS --> repoItemServico
+svcOS --> repoItemPeca
+svcPagamento --> repoPagamento
+svcPagamento --> repoOS
+svcPeca --> repoPeca
+svcServico --> repoServico
+
+repoCliente --> db
+repoVeiculo --> db
+repoOS --> db
+repoPagamento --> db
+repoPeca --> db
+repoServico --> db
+repoItemServico --> db
+repoItemPeca --> db
+
+note bottom of authMid
+  Intercepta todas as requisições
+  para validação de token JWT
+end note
+
+note bottom of errorHandler
+  Captura exceções não tratadas
+  e retorna resposta padronizada
+end note
+
+note bottom of validMid
+  Valida payloads de entrada
+  utilizando schemas Zod
+end note
+
+@enduml

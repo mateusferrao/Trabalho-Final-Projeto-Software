@@ -1,0 +1,42 @@
+@startuml estados-pagamento
+!theme plain
+skinparam stateFontSize 12
+
+title Diagrama de Estados — Pagamento
+
+[*] --> Pendente : criarPagamento()
+
+Pendente --> Processando : processar()
+
+Processando --> Aprovado : transacaoAprovada()
+Processando --> Recusado : transacaoRecusada()
+
+Recusado --> Pendente : tentarNovamente()
+Recusado --> [*] : desistir()
+
+Aprovado --> Estornado : estornar()
+Aprovado --> [*]
+
+Estornado --> [*]
+
+note right of Processando
+  Validação de forma
+  de pagamento e valor.
+  Timeout: 30 segundos.
+end note
+
+note right of Recusado
+  Motivos possíveis:
+  - Saldo insuficiente
+  - Cartão inválido
+  - Timeout na transação
+end note
+
+note right of Estornado
+  Permitido apenas dentro
+  de 24h após aprovação.
+  Requer autorização
+  do gerente.
+end note
+
+@enduml

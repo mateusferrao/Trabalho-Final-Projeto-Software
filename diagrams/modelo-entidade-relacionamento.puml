@@ -1,0 +1,118 @@
+@startuml modelo-entidade-relacionamento
+!theme plain
+skinparam linetype ortho
+
+title Modelo Entidade-Relacionamento — AutoFix
+
+entity "cliente" as cliente {
+    *id : UUID <<PK>>
+    --
+    *nome : VARCHAR(150)
+    *cpf : VARCHAR(11) <<UNIQUE>>
+    *telefone : VARCHAR(15)
+    email : VARCHAR(200)
+    endereco : TEXT
+    *data_cadastro : TIMESTAMP
+    *ativo : BOOLEAN
+}
+
+entity "veiculo" as veiculo {
+    *id : UUID <<PK>>
+    --
+    *placa : VARCHAR(7) <<UNIQUE>>
+    *marca : VARCHAR(50)
+    *modelo : VARCHAR(80)
+    *ano : INTEGER
+    cor : VARCHAR(30)
+    quilometragem : INTEGER
+    *cliente_id : UUID <<FK>>
+}
+
+entity "mecanico" as mecanico {
+    *id : UUID <<PK>>
+    --
+    *nome : VARCHAR(150)
+    *cpf : VARCHAR(11) <<UNIQUE>>
+    telefone : VARCHAR(15)
+    *especialidade : VARCHAR(20)
+    *ativo : BOOLEAN
+}
+
+entity "servico" as servico {
+    *id : UUID <<PK>>
+    --
+    *nome : VARCHAR(100)
+    descricao : TEXT
+    *preco_referencia : DECIMAL(10,2)
+    *tempo_estimado : INTEGER
+}
+
+entity "peca" as peca {
+    *id : UUID <<PK>>
+    --
+    *codigo : VARCHAR(30) <<UNIQUE>>
+    *nome : VARCHAR(100)
+    descricao : TEXT
+    *preco_custo : DECIMAL(10,2)
+    *preco_venda : DECIMAL(10,2)
+    *quantidade_estoque : INTEGER
+}
+
+entity "ordem_servico" as os {
+    *id : UUID <<PK>>
+    --
+    *numero : SERIAL <<UNIQUE>>
+    *data_abertura : TIMESTAMP
+    data_conclusao : TIMESTAMP
+    *status : VARCHAR(20)
+    *descricao_problema : TEXT
+    diagnostico : TEXT
+    valor_total : DECIMAL(10,2)
+    *cliente_id : UUID <<FK>>
+    *veiculo_id : UUID <<FK>>
+    mecanico_id : UUID <<FK>>
+}
+
+entity "item_servico" as itemServico {
+    *id : UUID <<PK>>
+    --
+    *valor : DECIMAL(10,2)
+    observacao : TEXT
+    *ordem_servico_id : UUID <<FK>>
+    *servico_id : UUID <<FK>>
+}
+
+entity "item_peca" as itemPeca {
+    *id : UUID <<PK>>
+    --
+    *quantidade : INTEGER
+    *preco_unitario : DECIMAL(10,2)
+    *ordem_servico_id : UUID <<FK>>
+    *peca_id : UUID <<FK>>
+}
+
+entity "pagamento" as pagamento {
+    *id : UUID <<PK>>
+    --
+    *valor : DECIMAL(10,2)
+    *forma_pagamento : VARCHAR(20)
+    *data : TIMESTAMP
+    *status : VARCHAR(15)
+    *ordem_servico_id : UUID <<FK>> <<UNIQUE>>
+}
+
+' ============================
+' RELACIONAMENTOS
+' ============================
+
+cliente ||--o{ veiculo : "possui"
+cliente ||--o{ os : "solicita"
+veiculo ||--o{ os : "referenciado em"
+mecanico ||--o{ os : "responsável por"
+os ||--o{ itemServico : "contém"
+os ||--o{ itemPeca : "contém"
+os ||--o| pagamento : "gera"
+servico ||--o{ itemServico : "tipo de"
+peca ||--o{ itemPeca : "tipo de"
+
+@enduml

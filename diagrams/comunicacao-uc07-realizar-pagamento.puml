@@ -1,0 +1,28 @@
+@startuml comunicacao-uc07-realizar-pagamento
+!theme plain
+skinparam packageStyle rectangle
+skinparam defaultTextAlignment center
+
+title Diagrama de Comunicação — UC-07: Realizar Pagamento
+
+rectangle "Gerente" as gerente
+rectangle ":PagamentoController" as ctrl
+rectangle ":PagamentoService" as svc
+rectangle ":OSRepository" as repoOS
+rectangle ":PagamentoRepository" as repoPag
+rectangle ":Pagamento" as pag
+
+gerente --> ctrl : 1: POST /pagamentos
+ctrl --> svc : 2: processarPagamento(osId,\nvalor, formaPagamento)
+svc --> repoOS : 3: findById(osId)
+repoOS --> svc : 3.1: ordemServico
+svc --> pag : 4: <<create>>\nnew Pagamento(valor,\nformaPagamento)
+svc --> svc : 5: pagamento.processar()
+svc --> repoPag : 6: save(pagamento)
+repoPag --> svc : 6.1: pagamentoPersistido
+svc --> repoOS : 7: save(ordemServico\n.setStatus("PAGA"))
+repoOS --> svc : 7.1: osAtualizada
+svc --> ctrl : 8: pagamentoRealizado
+ctrl --> gerente : 9: 201 Created\n{id, status, comprovante}
+
+@enduml

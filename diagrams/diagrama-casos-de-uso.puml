@@ -1,0 +1,42 @@
+@startuml diagrama-casos-de-uso
+!theme plain
+skinparam actorStyle awesome
+skinparam packageStyle rectangle
+skinparam usecaseFontSize 12
+skinparam actorFontSize 12
+
+title Diagrama de Casos de Uso — AutoFix
+
+left to right direction
+
+actor "Cliente" as cliente
+actor "Mecânico" as mecanico
+actor "Gerente" as gerente
+
+rectangle "AutoFix — Sistema de Gestão de Oficina Mecânica" {
+    usecase "UC-01\nCadastrar Cliente" as UC01
+    usecase "UC-02\nCadastrar Veículo" as UC02
+    usecase "UC-03\nAbrir Ordem\nde Serviço" as UC03
+    usecase "UC-04\nRegistrar\nDiagnóstico" as UC04
+    usecase "UC-05\nAdicionar Serviço\n/Peça à OS" as UC05
+    usecase "UC-06\nConcluir Ordem\nde Serviço" as UC06
+    usecase "UC-07\nRealizar\nPagamento" as UC07
+    usecase "UC-08\nConsultar Histórico\nde Serviços" as UC08
+}
+
+gerente --> UC01
+gerente --> UC02
+gerente --> UC03
+gerente --> UC07
+gerente --> UC08
+
+mecanico --> UC04
+mecanico --> UC05
+mecanico --> UC06
+
+cliente --> UC08
+
+UC05 ..> UC04 : <<extend>>
+UC06 ..> UC05 : <<include>>
+
+@enduml

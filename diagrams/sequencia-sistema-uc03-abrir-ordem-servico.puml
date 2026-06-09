@@ -1,0 +1,32 @@
+@startuml sequencia-sistema-uc03-abrir-ordem-servico
+!theme plain
+skinparam sequenceMessageAlign center
+
+title Diagrama de Sequência do Sistema — UC-03: Abrir Ordem de Serviço
+
+actor "Gerente" as gerente
+participant ":Sistema" as sistema
+
+gerente -> sistema : buscarCliente(cpf)
+sistema --> gerente : dadosCliente
+
+gerente -> sistema : listarVeiculos(clienteId)
+sistema --> gerente : listaVeiculos
+
+gerente -> sistema : selecionarVeiculo(veiculoId)
+sistema --> gerente : dadosVeiculo
+
+gerente -> sistema : informarProblema(descricaoProblema)
+sistema --> gerente : confirmação
+
+gerente -> sistema : abrirOrdemServico(clienteId, veiculoId, descricaoProblema)
+sistema --> gerente : ordemServico(numero, status="Aberta")
+
+note right of sistema
+  Pós-condições:
+  - OrdemServico criada com status "Aberta"
+  - OS associada ao Cliente e Veículo
+  - Data de abertura registrada
+end note
+
+@enduml

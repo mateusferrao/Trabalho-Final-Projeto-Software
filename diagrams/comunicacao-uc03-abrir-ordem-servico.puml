@@ -1,0 +1,28 @@
+@startuml comunicacao-uc03-abrir-ordem-servico
+!theme plain
+skinparam packageStyle rectangle
+skinparam defaultTextAlignment center
+
+title Diagrama de Comunicação — UC-03: Abrir Ordem de Serviço
+
+rectangle "Gerente" as gerente
+rectangle ":OSController" as ctrl
+rectangle ":OSService" as svc
+rectangle ":ClienteRepository" as repoCliente
+rectangle ":VeiculoRepository" as repoVeiculo
+rectangle ":OSRepository" as repoOS
+rectangle ":OrdemServico" as os
+
+gerente --> ctrl : 1: POST /ordens-servico
+ctrl --> svc : 2: criarOS(clienteId,\nveiculoId, descricao)
+svc --> repoCliente : 3: findById(clienteId)
+repoCliente --> svc : 3.1: cliente
+svc --> repoVeiculo : 4: findById(veiculoId)
+repoVeiculo --> svc : 4.1: veiculo
+svc --> os : 5: <<create>>\nnew OrdemServico(cliente,\nveiculo, descricao)
+svc --> repoOS : 6: save(ordemServico)
+repoOS --> svc : 6.1: ordemServicoPersistida
+svc --> ctrl : 7: ordemServicoCriada
+ctrl --> gerente : 8: 201 Created\n{id, numero, status}
+
+@enduml

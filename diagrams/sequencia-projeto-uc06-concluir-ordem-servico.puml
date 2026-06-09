@@ -1,0 +1,75 @@
+@startuml sequencia-projeto-uc06-concluir-ordem-servico
+!theme plain
+skinparam sequenceMessageAlign center
+
+title Diagrama de Sequência (Projeto) — UC-06: Concluir Ordem de Serviço
+
+actor "Mecânico" as mecanico
+
+participant ":OSController" as ctrl
+participant ":OSService" as svc
+participant ":OSRepository" as repoOS
+participant ":ItemServicoRepository" as repoIS
+participant ":ItemPecaRepository" as repoIP
+participant ":PecaRepository" as repoPeca
+
+mecanico -> ctrl : PATCH /ordens-servico/{id}/concluir\n{diagnostico, servicos[], pecas[]}
+activate ctrl
+
+ctrl -> svc : concluirOS(osId, diagnostico, servicos, pecas)
+activate svc
+
+svc -> repoOS : findById(osId)
+activate repoOS
+repoOS --> svc : ordemServico
+deactivate repoOS
+
+svc -> svc : validarStatus(ordemServico, "EM_EXECUCAO")
+
+svc -> svc : ordemServico.setDiagnostico(diagnostico)
+
+loop para cada serviço
+    create participant ":ItemServico" as is
+    svc -> is : new ItemServico(servicoId, valor, obs)
+    svc -> repoIS : save(itemServico)
+    activate repoIS
+    repoIS --> svc : itemServicoPersistido
+    deactivate repoIS
+end
+
+loop para cada peça
+    svc -> repoPeca : findById(pecaId)
+    activate repoPeca
+    repoPeca --> svc : peca
+    deactivate repoPeca
+
+    svc -> svc : peca.temEstoque(quantidade)
+
+    create participant ":ItemPeca" as ip
+    svc -> ip : new ItemPeca(pecaId, qtd, precoUnitario)
+    svc -> repoIP : save(itemPeca)
+    activate repoIP
+    repoIP --> svc : itemPecaPersistido
+    deactivate repoIP
+
+    svc -> repoPeca : save(peca.baixarEstoque(qtd))
+    activate repoPeca
+    repoPeca --> svc : pecaAtualizada
+    deactivate repoPeca
+end
+
+svc -> svc : ordemServico.calcularTotal()
+svc -> svc : ordemServico.setStatus("CONCLUIDA")
+
+svc -> repoOS : save(ordemServico)
+activate repoOS
+repoOS --> svc : ordemServicoAtualizada
+deactivate repoOS
+
+svc --> ctrl : ordemServicoConcluida
+deactivate svc
+
+ctrl --> mecanico : 200 OK\n{id, status: "CONCLUIDA", valorTotal}
+deactivate ctrl
+
+@enduml

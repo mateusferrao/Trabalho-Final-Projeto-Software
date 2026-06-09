@@ -1,0 +1,49 @@
+@startuml diagrama-implantacao
+!theme plain
+skinparam nodeStyle rectangle
+
+title Diagrama de Implantação — AutoFix
+
+node "<<device>>\nNavegador Web\n(Chrome, Firefox)" as browser {
+    artifact "React SPA" as reactApp <<JavaScript Bundle>> {
+    }
+}
+
+node "<<cloud>>\nVercel" as vercel {
+    artifact "Build Estático\n(React + Vite)" as staticBuild
+}
+
+node "<<cloud>>\nRailway / Render" as appServer {
+    node "<<execution environment>>\nNode.js 20 Runtime" as nodeRuntime {
+        artifact "Express.js API" as expressApi <<Node.js Application>>
+    }
+}
+
+node "<<cloud>>\nRailway / Render" as dbServer {
+    node "<<execution environment>>\nPostgreSQL 16" as pgRuntime {
+        database "autofix_db" as db
+    }
+}
+
+node "<<cloud>>\nServiço SMTP\n(SendGrid)" as emailServer {
+    artifact "API de E-mail" as emailApi
+}
+
+browser --> vercel : <<HTTPS>>
+vercel --> browser : <<HTML/CSS/JS>>
+browser --> appServer : <<HTTPS / JSON>>
+expressApi --> db : <<TCP/5432\nSQL>>
+expressApi --> emailApi : <<HTTPS\nSMTP API>>
+
+note right of vercel
+  Deploy automático
+  via GitHub Actions
+end note
+
+note right of appServer
+  API REST stateless
+  Variáveis de ambiente
+  para configuração
+end note
+
+@enduml

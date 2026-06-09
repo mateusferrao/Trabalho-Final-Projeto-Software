@@ -1,0 +1,43 @@
+@startuml estados-ordem-servico
+!theme plain
+skinparam stateFontSize 12
+
+title Diagrama de Estados — Ordem de Serviço
+
+[*] --> Aberta : abrirOS()
+
+Aberta --> EmDiagnostico : atribuirMecanico()
+Aberta --> Cancelada : cancelar()
+
+EmDiagnostico --> OrcamentoGerado : registrarDiagnostico()\n+ adicionarServicos()\n+ adicionarPecas()
+EmDiagnostico --> Cancelada : cancelar()
+
+OrcamentoGerado --> Aprovada : aprovarOrcamento()
+OrcamentoGerado --> Cancelada : recusarOrcamento()
+
+Aprovada --> EmExecucao : iniciarExecucao()
+Aprovada --> Cancelada : cancelar()
+
+EmExecucao --> Concluida : concluirOS()
+
+Concluida --> Paga : realizarPagamento()
+Concluida --> Cancelada : cancelar()
+
+Paga --> Encerrada : encerrarOS()
+
+Encerrada --> [*]
+Cancelada --> [*]
+
+note right of Cancelada
+  Pode ser cancelada em qualquer
+  estado anterior a "Paga".
+  Motivo deve ser registrado.
+end note
+
+note right of Paga
+  Pagamento aprovado.
+  OS não pode mais
+  ser cancelada.
+end note
+
+@enduml
