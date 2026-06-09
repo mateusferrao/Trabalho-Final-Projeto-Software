@@ -583,50 +583,6 @@ O projeto utiliza **GitHub Actions** para CI/CD. Cada push na branch `main` disp
 
 ---
 
-## Demonstracao
-
-### Aplicacao Web
-
-| Tela | Captura de Tela |
-| :---: | :---: |
-| **Dashboard** | **Listagem de OS** |
-| <img src="https://joaopauloaramuni.github.io/image/aramunilogo.png" alt="Dashboard" width="120px" height="120px"> | <img src="https://joaopauloaramuni.github.io/image/aramunilogo.png" alt="Listagem OS" width="120px" height="120px"> |
-| **Cadastro de Cliente** | **Detalhes da OS** |
-| <img src="https://joaopauloaramuni.github.io/image/aramunilogo.png" alt="Cadastro Cliente" width="120px" height="120px"> | <img src="https://joaopauloaramuni.github.io/image/aramunilogo.png" alt="Detalhes OS" width="120px" height="120px"> |
-| **Estoque de Pecas** | **Pagamento** |
-| <img src="https://joaopauloaramuni.github.io/image/aramunilogo.png" alt="Estoque" width="120px" height="120px"> | <img src="https://joaopauloaramuni.github.io/image/aramunilogo.png" alt="Pagamento" width="120px" height="120px"> |
-
-### Exemplo de Saida no Terminal (API)
-
-```bash
-curl -X POST 'http://localhost:3001/api/ordens-servico' \
-     -H 'Authorization: Bearer <token>' \
-     -H 'Content-Type: application/json' \
-     -d '{"clienteId": "uuid-cliente", "veiculoId": "uuid-veiculo", "descricaoProblema": "Motor falhando ao acelerar"}'
-```
-
-**Saida Esperada:**
-```json
-{
-  "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
-  "numero": 1042,
-  "status": "ABERTA",
-  "dataAbertura": "2024-11-15T14:30:00.000Z",
-  "descricaoProblema": "Motor falhando ao acelerar",
-  "cliente": {
-    "id": "uuid-cliente",
-    "nome": "Joao Silva"
-  },
-  "veiculo": {
-    "id": "uuid-veiculo",
-    "placa": "ABC1D23",
-    "modelo": "Honda Civic 2020"
-  }
-}
-```
-
----
-
 ## Testes
 
 ### Testes Unitarios e de Integracao
